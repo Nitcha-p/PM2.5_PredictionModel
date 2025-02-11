@@ -103,25 +103,25 @@ df = df.na.drop()
 windowSpec = Window.partitionBy("District_Label_encoded").orderBy("Datetime")
 df = df.withColumn("row_num", row_number().over(windowSpec))
 
-# คำนวณจำนวนแถวเพื่อแบ่งเป็น Train และ Test (70%-30%)
-# คำนวณจำนวนแถวทั้งหมดในแต่ละ District
+# Calculate the number of rows to split into Train and Test (70%-30%).
+# Calculate the total number of rows for each district.
 district_counts = df.groupBy("District_Label_encoded").count()
 
-# เข้าร่วมข้อมูลกับจำนวนแถวในแต่ละ District เพื่อให้ได้ split point
+# Join the data with the total row count for each district to determine the split point.
 df = df.join(district_counts, "District_Label_encoded")
 df = df.withColumn("split_point", (col("count") * 0.7).cast("int"))
 
-# แบ่งข้อมูลเป็น Train และ Test ตาม row_num
+# Split the data into Train and Test sets based on the `row_num`.
 train_df = df.filter(col("row_num") <= col("split_point"))
 test_df = df.filter(col("row_num") > col("split_point"))
 
-# 7. แปลงข้อมูลเป็น Pandas DataFrame
+# Convert the data into a Pandas DataFrame.
 train_df = train_df.toPandas()
 test_df = test_df.toPandas()
 
-# print(train_df.columns)
+print(train_df.columns)
 
-# ลบคอลัมน์ที่ไม่จำเป็น และจัดเตรียมข้อมูลสำหรับโมเดล
+# Drop unnecessary columns and prepare the data for the model.
 drop_columns = ['PM2_5(ug/m3)', 'Date', 'Datetime', 'District', 'count', 'split_point', 'row_num','AQI(Index/Level)',
                  'Precipitation(Millimeters)', 'Hour','Day_of_week']
 
@@ -131,7 +131,7 @@ y_train = train_df["PM2_5(ug/m3)"]
 X_test = test_df.drop(columns=drop_columns)
 y_test = test_df["PM2_5(ug/m3)"]
 
-# สร้างและเทรนโมเดล LightGBM
+# Create and train a LightGBM model.
 model = LGBMRegressor(n_estimators=50, learning_rate=0.05, max_depth=3, random_state=42)
 model.fit(X_train, y_train)
 
@@ -150,11 +150,11 @@ print(f"MAE: {mae:.2f}")
 print(f"RMSE: {rmse:.2f}")
 print(f"R²: {r2:.2f}")
 
-# ทำนายผลลัพธ์ในชุด Train และ Test
+# Predict results on the Train and Test sets.
 y_train_pred = model.predict(X_train)
 y_test_pred = model.predict(X_test)
 
-# คำนวณค่า R² สำหรับชุด Train และ Test
+# Calculate the R² score for the Train and Test sets.
 r2_train = r2_score(y_train, y_train_pred)
 r2_test = r2_score(y_test, y_test_pred)
 
