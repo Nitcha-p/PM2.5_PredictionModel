@@ -23,7 +23,8 @@ Metrics :
   - Label encoding was used instead of one-hot encoding to reduce memory usage, though this impacted accuracy slightly.
 
 # Challenges and Solutions
-- Memory Issues : One-hot encoding caused memory constraints in PySpark. Solution: Used label encoding to reduce memory usage.
+- Memory Issues : One-hot encoding caused memory constraints in PySpark.
+- Solution: Used label encoding to reduce memory usage.
 - Model Support : PySpark does not natively support LightGBM. Solution: Converted Spark DataFrame to Pandas for training.
 
 # Results Summary
