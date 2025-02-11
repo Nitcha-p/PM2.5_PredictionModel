@@ -1,5 +1,5 @@
 # PM2.5 Prediction Model
-This project predicts PM2.5 concentrations by comparing the performance of three machine learning models: LightGBM, XGBoost, and CatBoost. LightGBM was selected as the best model based on MAE, RMSE, and R² metrics. Since PySpark does not natively support LightGBM, the processed Spark DataFrame was converted to a Pandas DataFrame for model training. The project also addresses challenges related to encoding and memory optimization.
+This project predicts PM2.5 concentrations by comparing the performance of three machine learning models : LightGBM, XGBoost, and CatBoost. LightGBM was selected as the best model based on MAE, RMSE, and R² metrics. Since PySpark does not natively support LightGBM, the processed Spark DataFrame was converted to a Pandas DataFrame for model training. The project also addresses challenges related to encoding and memory optimization.
 
 # Project Overview
 Goal : Build a model to predict PM2.5 levels based on environmental data (e.g., temperature, humidity, wind speed).  
